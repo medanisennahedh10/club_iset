@@ -22,11 +22,11 @@ class Evenement
     #[ORM\Column(length: 255)]
     private ?string $nomEvenement = null;
 
-    #[ORM\Column]
-    private ?\DateTime $dateDebut = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $dateDebut = null;
 
-    #[ORM\Column]
-    private ?\DateTime $dateFin = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $dateFin = null;
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
@@ -37,30 +37,30 @@ class Evenement
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
-    #[ORM\Column]
-    private ?\DateTime $createdAt = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    private ?\DateTimeInterface $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'evenements')]
-    private ?Club $Club = null;
+    private ?Club $club = null;
 
     /**
      * @var Collection<int, Participation>
      */
-    #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'evenement_id')]
+    #[ORM\OneToMany(mappedBy: 'evenement', targetEntity: Participation::class)]
     private Collection $participations;
-
-
 
     public function __construct()
     {
         $this->participations = new ArrayCollection();
     }
 
+    // ===================== ID =====================
     public function getId(): ?int
     {
         return $this->id;
     }
 
+    // ===================== Lieu =====================
     public function getLieu(): ?string
     {
         return $this->lieu;
@@ -69,10 +69,10 @@ class Evenement
     public function setLieu(string $lieu): static
     {
         $this->lieu = $lieu;
-
         return $this;
     }
 
+    // ===================== Nom =====================
     public function getNomEvenement(): ?string
     {
         return $this->nomEvenement;
@@ -81,34 +81,33 @@ class Evenement
     public function setNomEvenement(string $nomEvenement): static
     {
         $this->nomEvenement = $nomEvenement;
-
         return $this;
     }
 
-    public function getDateDebut(): ?\DateTime
+    // ===================== Dates =====================
+    public function getDateDebut(): ?\DateTimeInterface
     {
         return $this->dateDebut;
     }
 
-    public function setDateDebut(\DateTime $dateDebut): static
+    public function setDateDebut(\DateTimeInterface $dateDebut): static
     {
         $this->dateDebut = $dateDebut;
-
         return $this;
     }
 
-    public function getDateFin(): ?\DateTime
+    public function getDateFin(): ?\DateTimeInterface
     {
         return $this->dateFin;
     }
 
-    public function setDateFin(\DateTime $dateFin): static
+    public function setDateFin(\DateTimeInterface $dateFin): static
     {
         $this->dateFin = $dateFin;
-
         return $this;
     }
 
+    // ===================== Description =====================
     public function getDescription(): ?string
     {
         return $this->description;
@@ -117,10 +116,10 @@ class Evenement
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
 
+    // ===================== Image =====================
     public function getImage(): ?string
     {
         return $this->image;
@@ -129,10 +128,10 @@ class Evenement
     public function setImage(string $image): static
     {
         $this->image = $image;
-
         return $this;
     }
 
+    // ===================== Status =====================
     public function getStatus(): ?string
     {
         return $this->status;
@@ -141,34 +140,34 @@ class Evenement
     public function setStatus(string $status): static
     {
         $this->status = $status;
-
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTime
+    // ===================== CreatedAt =====================
+    public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTime $createdAt): static
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
         $this->createdAt = $createdAt;
-
         return $this;
     }
 
+    // ===================== Club =====================
     public function getClub(): ?Club
     {
-        return $this->Club;
+        return $this->club;
     }
 
-    public function setClub(?Club $Club): static
+    public function setClub(?Club $club): static
     {
-        $this->Club = $Club;
-
+        $this->club = $club;
         return $this;
     }
 
+    // ===================== Participations =====================
     /**
      * @return Collection<int, Participation>
      */
@@ -181,7 +180,7 @@ class Evenement
     {
         if (!$this->participations->contains($participation)) {
             $this->participations->add($participation);
-            $participation->setEvenementId($this);
+            $participation->setEvenement($this);
         }
 
         return $this;
@@ -190,14 +189,11 @@ class Evenement
     public function removeParticipation(Participation $participation): static
     {
         if ($this->participations->removeElement($participation)) {
-            // set the owning side to null (unless already changed)
-            if ($participation->getEvenementId() === $this) {
-                $participation->setEvenementId(null);
+            if ($participation->getEvenement() === $this) {
+                $participation->setEvenement(null);
             }
         }
 
         return $this;
     }
-
-    
 }

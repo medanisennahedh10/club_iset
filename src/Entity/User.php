@@ -53,11 +53,18 @@ class User
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'user_id')]
     private Collection $participations;
 
+    /**
+     * @var Collection<int, Candidature>
+     */
+    #[ORM\OneToMany(targetEntity: Candidature::class, mappedBy: 'user_id')]
+    private Collection $candidatures;
+
 
 
     public function __construct()
     {
         $this->participations = new ArrayCollection();
+        $this->candidatures = new ArrayCollection();
     }
 
 
@@ -212,6 +219,36 @@ class User
             // set the owning side to null (unless already changed)
             if ($participation->getUserId() === $this) {
                 $participation->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Candidature>
+     */
+    public function getCandidatures(): Collection
+    {
+        return $this->candidatures;
+    }
+
+    public function addCandidature(Candidature $candidature): static
+    {
+        if (!$this->candidatures->contains($candidature)) {
+            $this->candidatures->add($candidature);
+            $candidature->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCandidature(Candidature $candidature): static
+    {
+        if ($this->candidatures->removeElement($candidature)) {
+            // set the owning side to null (unless already changed)
+            if ($candidature->getUserId() === $this) {
+                $candidature->setUserId(null);
             }
         }
 

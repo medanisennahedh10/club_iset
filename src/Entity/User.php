@@ -53,19 +53,16 @@ class User
     #[ORM\OneToMany(targetEntity: Participation::class, mappedBy: 'user_id')]
     private Collection $participations;
 
-<<<<<<< HEAD
 
-=======
->>>>>>> youssef
+
     public function __construct()
     {
         $this->participations = new ArrayCollection();
     }
 
-<<<<<<< HEAD
 
-=======
->>>>>>> youssef
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -220,4 +217,6 @@ class User
 
         return $this;
     }
+
+
 }
